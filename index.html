@@ -3,483 +3,454 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="ระบบจัดการตู้จำหน่ายสินค้าอัตโนมัติ Vending Machine Management System">
-    <meta name="author" content="Vending Machine Management">
-    <title>Vending Machine Management System</title>
-
-    <link rel="stylesheet" href="style.css">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="description" content="ระบบจัดการตู้จำหน่ายสินค้าอัตโนมัติ (Vending Machine Management System)">
+    <title>ระบบจัดการตู้จำหน่ายสินค้าอัตโนมัติ</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header class="main-header">
+    <!-- ===================== HEADER ===================== -->
+    <header class="app-header" id="appHeader">
         <div class="header-inner">
-            <div class="logo">
-                <div class="logo-icon">
-                    <i class="fa-solid fa-store"></i>
-                </div>
-                <div class="logo-text">
-                    <h1>Vending Machine</h1>
-                    <span>Management System</span>
-                </div>
-            </div>
+            <a class="logo" href="#top" aria-label="ระบบจัดการตู้จำหน่ายสินค้าอัตโนมัติ">
+                <span class="logo-icon"><i class="fa-solid fa-store" aria-hidden="true"></i></span>
+                <span class="logo-text">
+                    <span class="logo-title">Vending Manager</span>
+                    <span class="logo-subtitle">ระบบจัดการตู้จำหน่ายสินค้าอัตโนมัติ</span>
+                </span>
+            </a>
 
-            <div class="import-export-controls">
-                <div class="control-group import-group">
-                    <span class="group-label">
-                        <i class="fa-solid fa-file-import"></i> Import
-                    </span>
-                    <div class="btn-group">
-                        <label for="import-xlsx" class="btn btn-import" title="Import ไฟล์ product.xlsx">
-                            <i class="fa-solid fa-file-excel"></i>
-                            <span>.xlsx</span>
-                        </label>
-                        <input type="file" id="import-xlsx" accept=".xlsx, .xls" hidden>
-
-                        <label for="import-csv" class="btn btn-import" title="Import ไฟล์ CSV">
-                            <i class="fa-solid fa-file-csv"></i>
-                            <span>.csv</span>
-                        </label>
-                        <input type="file" id="import-csv" accept=".csv" hidden>
-
-                        <label for="import-json" class="btn btn-import" title="Import ไฟล์ JSON">
-                            <i class="fa-solid fa-file-code"></i>
-                            <span>.json</span>
-                        </label>
-                        <input type="file" id="import-json" accept=".json" hidden>
-                    </div>
+            <div class="header-actions">
+                <div class="action-group" role="group" aria-label="นำเข้าข้อมูล">
+                    <span class="action-group-label"><i class="fa-solid fa-file-import" aria-hidden="true"></i> นำเข้า</span>
+                    <button type="button" class="btn btn-import" id="btnImportXlsx" title="นำเข้าไฟล์ Excel (.xlsx)">
+                        <i class="fa-solid fa-file-excel" aria-hidden="true"></i> .xlsx
+                    </button>
+                    <button type="button" class="btn btn-import" id="btnImportCsv" title="นำเข้าไฟล์ CSV (.csv)">
+                        <i class="fa-solid fa-file-csv" aria-hidden="true"></i> .csv
+                    </button>
+                    <button type="button" class="btn btn-import" id="btnImportJson" title="นำเข้าไฟล์ JSON (.json)">
+                        <i class="fa-solid fa-file-code" aria-hidden="true"></i> .json
+                    </button>
                 </div>
 
-                <div class="control-group export-group">
-                    <span class="group-label">
-                        <i class="fa-solid fa-file-export"></i> Export
-                    </span>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-export" id="export-xlsx" title="Export เป็น product.xlsx">
-                            <i class="fa-solid fa-file-excel"></i>
-                            <span>.xlsx</span>
-                        </button>
-                        <button type="button" class="btn btn-export" id="export-csv" title="Export เป็น CSV (ระบุวันที่ในชื่อไฟล์)">
-                            <i class="fa-solid fa-file-csv"></i>
-                            <span>.csv</span>
-                        </button>
-                        <button type="button" class="btn btn-export" id="export-json" title="Export เป็น JSON (ระบุวันที่ในชื่อไฟล์)">
-                            <i class="fa-solid fa-file-code"></i>
-                            <span>.json</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <div id="notification-bar" class="notification-bar hidden">
-        <div class="notification-content">
-            <i class="fa-solid fa-circle-info" id="notification-icon"></i>
-            <span id="notification-message">กำลังโหลดข้อมูล...</span>
-        </div>
-        <button type="button" class="notification-close" id="notification-close">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-    </div>
-
-    <main class="container">
-
-        <section id="machine-overview" class="dashboard-section">
-            <div class="section-header">
-                <h2>
-                    <i class="fa-solid fa-server"></i>
-                    ภาพรวมข้อมูลเครื่อง (Machine Overview)
-                </h2>
-                <p class="section-description">ข้อมูลทั่วไปของตู้จำหน่ายสินค้าและสถานะการทำงาน</p>
-            </div>
-
-            <div class="overview-grid">
-                <div class="overview-card">
-                    <div class="overview-card-header">
-                        <i class="fa-solid fa-microchip"></i>
-                        <span>ข้อมูลเครื่อง</span>
-                    </div>
-                    <div class="overview-card-body">
-                        <div class="info-row">
-                            <span class="info-label">Machine Activation Code:</span>
-                            <span class="info-value" id="machine-activation-code">-</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">จังหวัด:</span>
-                            <span class="info-value" id="machine-province">-</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">อำเภอ:</span>
-                            <span class="info-value" id="machine-district">-</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">GM:</span>
-                            <span class="info-value" id="machine-gm">-</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">ย่านแบ:</span>
-                            <span class="info-value" id="machine-area">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="overview-card">
-                    <div class="overview-card-header">
-                        <i class="fa-solid fa-gauge-high"></i>
-                        <span>สถานะเครื่อง</span>
-                    </div>
-                    <div class="overview-card-body">
-                        <div class="status-row">
-                            <span class="status-label">สถานะออนไลน์:</span>
-                            <span class="badge badge-info" id="status-online">-</span>
-                        </div>
-                        <div class="status-row">
-                            <span class="status-label">สถานะสต๊อก:</span>
-                            <span class="badge badge-info" id="status-stock">-</span>
-                        </div>
-                        <div class="status-row">
-                            <span class="status-label">สถานะสแกนเนอร์:</span>
-                            <span class="badge badge-info" id="status-scanner">-</span>
-                        </div>
-                        <div class="status-row">
-                            <span class="status-label">สถานะอุณหภูมิ:</span>
-                            <span class="badge badge-info" id="status-temperature">-</span>
-                        </div>
-                        <div class="status-row">
-                            <span class="status-label">สถานะธนบัตร:</span>
-                            <span class="badge badge-info" id="status-banknote">-</span>
-                        </div>
-                        <div class="status-row">
-                            <span class="status-label">สถานะลิฟท์ส่งสินค้า:</span>
-                            <span class="badge badge-info" id="status-lift">-</span>
-                        </div>
-                        <div class="status-row">
-                            <span class="status-label">สถานะประตู:</span>
-                            <span class="badge badge-info" id="status-door">-</span>
-                        </div>
-                        <div class="status-row">
-                            <span class="status-label">สถานะประตูสินค้า:</span>
-                            <span class="badge badge-info" id="status-product-door">-</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="coin-summary" class="dashboard-section">
-            <div class="section-header">
-                <h2>
-                    <i class="fa-solid fa-coins"></i>
-                    สรุปเหรียญที่ต้องนำไปเติม (Coin Refill Summary)
-                </h2>
-                <p class="section-description">
-                    เป้าหมายความจุสูงสุด: เหรียญ 1 บาท = 100 เหรียญ | เหรียญ 5 บาท = 100 เหรียญ | เหรียญ 10 บาท = 60 เหรียญ
-                </p>
-            </div>
-
-            <div class="coin-cards-grid">
-                <div class="coin-card" id="coin-card-1">
-                    <div class="coin-card-icon coin-1">
-                        <i class="fa-solid fa-coins"></i>
-                    </div>
-                    <div class="coin-card-content">
-                        <h3>เหรียญ 1 บาท</h3>
-                        <div class="coin-stats">
-                            <div class="coin-stat-row">
-                                <span class="coin-stat-label">คงเหลือ:</span>
-                                <span class="coin-stat-value" id="coin-1-current">-</span>
-                            </div>
-                            <div class="coin-stat-row">
-                                <span class="coin-stat-label">ความจุสูงสุด:</span>
-                                <span class="coin-stat-value" id="coin-1-max">100</span>
-                            </div>
-                            <div class="coin-stat-row highlight">
-                                <span class="coin-stat-label">ต้องเติม:</span>
-                                <span class="coin-stat-value refill-value" id="coin-1-refill">-</span>
-                            </div>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="coin-1-progress" style="width: 0%;"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="coin-card" id="coin-card-5">
-                    <div class="coin-card-icon coin-5">
-                        <i class="fa-solid fa-coins"></i>
-                    </div>
-                    <div class="coin-card-content">
-                        <h3>เหรียญ 5 บาท</h3>
-                        <div class="coin-stats">
-                            <div class="coin-stat-row">
-                                <span class="coin-stat-label">คงเหลือ:</span>
-                                <span class="coin-stat-value" id="coin-5-current">-</span>
-                            </div>
-                            <div class="coin-stat-row">
-                                <span class="coin-stat-label">ความจุสูงสุด:</span>
-                                <span class="coin-stat-value" id="coin-5-max">100</span>
-                            </div>
-                            <div class="coin-stat-row highlight">
-                                <span class="coin-stat-label">ต้องเติม:</span>
-                                <span class="coin-stat-value refill-value" id="coin-5-refill">-</span>
-                            </div>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="coin-5-progress" style="width: 0%;"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="coin-card" id="coin-card-10">
-                    <div class="coin-card-icon coin-10">
-                        <i class="fa-solid fa-coins"></i>
-                    </div>
-                    <div class="coin-card-content">
-                        <h3>เหรียญ 10 บาท</h3>
-                        <div class="coin-stats">
-                            <div class="coin-stat-row">
-                                <span class="coin-stat-label">คงเหลือ:</span>
-                                <span class="coin-stat-value" id="coin-10-current">-</span>
-                            </div>
-                            <div class="coin-stat-row">
-                                <span class="coin-stat-label">ความจุสูงสุด:</span>
-                                <span class="coin-stat-value" id="coin-10-max">60</span>
-                            </div>
-                            <div class="coin-stat-row highlight">
-                                <span class="coin-stat-label">ต้องเติม:</span>
-                                <span class="coin-stat-value refill-value" id="coin-10-refill">-</span>
-                            </div>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="coin-10-progress" style="width: 0%;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="product-refill-summary" class="dashboard-section">
-            <div class="section-header">
-                <h2>
-                    <i class="fa-solid fa-box-open"></i>
-                    สรุปสินค้าที่ต้องนำไปเติม (Product Refill Summary)
-                </h2>
-                <p class="section-description">
-                    เกณฑ์: สินค้าสูงสุด 4 ชิ้น/ช่อง | หากคงเหลือน้อยกว่า 4 ชิ้น ต้องนำไปเติม | หากค่าติดลบให้ถือว่าเป็น 0 และเติม 4 ชิ้น
-                </p>
-            </div>
-
-            <div class="summary-stats">
-                <div class="summary-stat-card">
-                    <div class="summary-stat-icon total">
-                        <i class="fa-solid fa-layer-group"></i>
-                    </div>
-                    <div class="summary-stat-info">
-                        <span class="summary-stat-label">ช่องขายทั้งหมด</span>
-                        <span class="summary-stat-value" id="total-slots-count">0</span>
-                    </div>
-                </div>
-                <div class="summary-stat-card">
-                    <div class="summary-stat-icon warning">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                    </div>
-                    <div class="summary-stat-info">
-                        <span class="summary-stat-label">ช่องที่ต้องเติม</span>
-                        <span class="summary-stat-value" id="refill-slots-count">0</span>
-                    </div>
-                </div>
-                <div class="summary-stat-card">
-                    <div class="summary-stat-icon success">
-                        <i class="fa-solid fa-circle-check"></i>
-                    </div>
-                    <div class="summary-stat-info">
-                        <span class="summary-stat-label">ช่องที่ไม่ต้องเติม</span>
-                        <span class="summary-stat-value" id="no-refill-slots-count">0</span>
-                    </div>
-                </div>
-                <div class="summary-stat-card">
-                    <div class="summary-stat-icon info">
-                        <i class="fa-solid fa-cubes"></i>
-                    </div>
-                    <div class="summary-stat-info">
-                        <span class="summary-stat-label">จำนวนชิ้นที่ต้องเติมรวม</span>
-                        <span class="summary-stat-value" id="total-refill-items">0</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="table-responsive">
-                <table class="data-table" id="refill-table">
-                    <thead>
-                        <tr>
-                            <th class="col-slot">ช่อง (Slot)</th>
-                            <th class="col-name">ชื่อสินค้า (Product Name)</th>
-                            <th class="col-stock">คงเหลือ (Stock)</th>
-                            <th class="col-max">สูงสุด (Max)</th>
-                            <th class="col-refill">จำนวนที่ต้องเติม</th>
-                            <th class="col-status">สถานะ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="refill-table-body">
-                        <tr class="empty-row">
-                            <td colspan="6" class="text-center">
-                                <i class="fa-solid fa-inbox"></i>
-                                <p>ยังไม่มีข้อมูล กรุณานำเข้าไฟล์ (Import) ก่อน</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <section id="machine-layout" class="dashboard-section">
-            <div class="section-header">
-                <h2>
-                    <i class="fa-solid fa-warehouse"></i>
-                    แผนผังตู้จำหน่ายสินค้า (Machine Layout)
-                </h2>
-                <p class="section-description">แสดงสถานะสินค้าในแต่ละช่องของตู้ แยกตามชั้น</p>
-            </div>
-
-            <div class="layout-legend">
-                <div class="legend-item">
-                    <span class="legend-color legend-full"></span>
-                    <span>เต็ม (4/4)</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-color legend-medium"></span>
-                    <span>ปานกลาง (2-3/4)</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-color legend-low"></span>
-                    <span>น้อย (1/4)</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-color legend-empty"></span>
-                    <span>หมด / ติดลบ (0 หรือน้อยกว่า)</span>
-                </div>
-            </div>
-
-            <div class="shelves-container" id="shelves-container">
-                <div class="empty-state">
-                    <i class="fa-solid fa-inbox"></i>
-                    <p>ยังไม่มีข้อมูล กรุณานำเข้าไฟล์ (Import) ก่อน</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="product-list" class="dashboard-section">
-            <div class="section-header">
-                <h2>
-                    <i class="fa-solid fa-list"></i>
-                    ข้อมูลสินค้าทั้งหมด (Master Product List)
-                </h2>
-                <p class="section-description">รายการสินค้าทั้งหมดในระบบ พร้อมหมวดหมู่ (PMA) และข้อมูลประกอบ</p>
-            </div>
-
-            <div class="filters-bar">
-                <div class="filter-group">
-                    <label for="search-product">
-                        <i class="fa-solid fa-search"></i> ค้นหา:
-                    </label>
-                    <input type="text" id="search-product" class="form-control" placeholder="ค้นหาชื่อสินค้า หรือ Barcode...">
-                </div>
-                <div class="filter-group">
-                    <label for="filter-category">
-                        <i class="fa-solid fa-filter"></i> หมวดหมู่:
-                    </label>
-                    <select id="filter-category" class="form-control">
-                        <option value="">ทุกหมวดหมู่</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="filter-status">
-                        <i class="fa-solid fa-toggle-on"></i> สถานะ:
-                    </label>
-                    <select id="filter-status" class="form-control">
-                        <option value="">ทุกสถานะ</option>
-                        <option value="publish">Publish</option>
-                        <option value="disable">Disable</option>
-                    </select>
-                </div>
-                <div class="filter-group filter-actions">
-                    <button type="button" class="btn btn-secondary" id="clear-filters">
-                        <i class="fa-solid fa-eraser"></i> ล้างตัวกรอง
+                <div class="action-group" role="group" aria-label="ส่งออกข้อมูล">
+                    <span class="action-group-label"><i class="fa-solid fa-file-export" aria-hidden="true"></i> ส่งออก</span>
+                    <button type="button" class="btn btn-export" id="btnExportXlsx" title="ส่งออกไฟล์ Excel (product.xlsx)">
+                        <i class="fa-solid fa-file-excel" aria-hidden="true"></i> .xlsx
+                    </button>
+                    <button type="button" class="btn btn-export" id="btnExportCsv" title="ส่งออกไฟล์ CSV">
+                        <i class="fa-solid fa-file-csv" aria-hidden="true"></i> .csv
+                    </button>
+                    <button type="button" class="btn btn-export" id="btnExportJson" title="ส่งออกไฟล์ JSON">
+                        <i class="fa-solid fa-file-code" aria-hidden="true"></i> .json
                     </button>
                 </div>
             </div>
 
-            <div class="table-responsive">
-                <table class="data-table" id="master-product-table">
+            <input type="file" id="fileInputXlsx" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+            <input type="file" id="fileInputCsv" accept=".csv,text/csv" hidden>
+            <input type="file" id="fileInputJson" accept=".json,application/json" hidden>
+        </div>
+    </header>
+
+    <!-- ===================== NOTIFICATION BAR ===================== -->
+    <div class="notification-bar" id="notificationBar" role="status" aria-live="polite" hidden>
+        <i class="fa-solid fa-circle-info notification-icon" id="notificationIcon" aria-hidden="true"></i>
+        <span class="notification-message" id="notificationMessage"></span>
+        <button type="button" class="notification-close" id="notificationClose" aria-label="ปิดการแจ้งเตือน">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+    </div>
+
+    <main class="app-main" id="top">
+
+        <!-- ===================== SECTION 1: MACHINE OVERVIEW ===================== -->
+        <section class="section" id="sectionMachineOverview" aria-labelledby="titleMachineOverview">
+            <div class="section-head">
+                <h2 class="section-title" id="titleMachineOverview">
+                    <i class="fa-solid fa-server" aria-hidden="true"></i> ภาพรวมตู้จำหน่ายสินค้า
+                </h2>
+            </div>
+
+            <div class="overview-grid">
+                <article class="card machine-info-card" id="machineInfoCard">
+                    <h3 class="card-title"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> ข้อมูลเครื่อง</h3>
+                    <dl class="info-list">
+                        <div class="info-row">
+                            <dt>Machine Activation Code</dt>
+                            <dd id="machineActivationCode">-</dd>
+                        </div>
+                        <div class="info-row">
+                            <dt>จังหวัด</dt>
+                            <dd><input type="text" id="machineProvince" class="info-input" placeholder="กรอกจังหวัด" aria-label="จังหวัด" autocomplete="off"></dd>
+                        </div>
+                        <div class="info-row">
+                            <dt>อำเภอ</dt>
+                            <dd><input type="text" id="machineDistrict" class="info-input" placeholder="กรอกอำเภอ" aria-label="อำเภอ" autocomplete="off"></dd>
+                        </div>
+                        <div class="info-row">
+                            <dt>GM</dt>
+                            <dd><input type="text" id="machineGM" class="info-input" placeholder="กรอกชื่อ GM" aria-label="GM" autocomplete="off"></dd>
+                        </div>
+                        <div class="info-row">
+                            <dt>ย่านแบ</dt>
+                            <dd><input type="text" id="machineZone" class="info-input" placeholder="กรอกย่านแบ" aria-label="ย่านแบ" autocomplete="off"></dd>
+                        </div>
+                    </dl>
+                    <div class="info-actions">
+                        <button type="button" class="btn btn-primary" id="btnSaveMachineInfo">
+                            <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> บันทึกข้อมูลเครื่อง
+                        </button>
+                    </div>
+                </article>
+
+                <article class="card machine-status-card" id="machineStatusCard">
+                    <h3 class="card-title"><i class="fa-solid fa-heart-pulse" aria-hidden="true"></i> สถานะเครื่อง</h3>
+                    <ul class="status-grid" id="statusGrid">
+                        <li class="status-item" data-status-key="online">
+                            <i class="fa-solid fa-wifi status-icon" aria-hidden="true"></i>
+                            <span class="status-label">สถานะออนไลน์</span>
+                            <span class="status-value" id="statusOnline">-</span>
+                        </li>
+                        <li class="status-item" data-status-key="stock">
+                            <i class="fa-solid fa-boxes-stacked status-icon" aria-hidden="true"></i>
+                            <span class="status-label">สถานะสต๊อก</span>
+                            <span class="status-value" id="statusStock">-</span>
+                        </li>
+                        <li class="status-item" data-status-key="scanner">
+                            <i class="fa-solid fa-qrcode status-icon" aria-hidden="true"></i>
+                            <span class="status-label">สถานะสแกนเนอร์</span>
+                            <span class="status-value" id="statusScanner">-</span>
+                        </li>
+                        <li class="status-item" data-status-key="temperature">
+                            <i class="fa-solid fa-temperature-half status-icon" aria-hidden="true"></i>
+                            <span class="status-label">สถานะอุณหภูมิ</span>
+                            <span class="status-value" id="statusTemperature">-</span>
+                        </li>
+                        <li class="status-item" data-status-key="banknote">
+                            <i class="fa-solid fa-money-bill-wave status-icon" aria-hidden="true"></i>
+                            <span class="status-label">สถานะธนบัตร</span>
+                            <span class="status-value" id="statusBanknote">-</span>
+                        </li>
+                        <li class="status-item" data-status-key="lift">
+                            <i class="fa-solid fa-elevator status-icon" aria-hidden="true"></i>
+                            <span class="status-label">สถานะลิฟท์ส่งสินค้า</span>
+                            <span class="status-value" id="statusLift">-</span>
+                        </li>
+                        <li class="status-item" data-status-key="door">
+                            <i class="fa-solid fa-door-closed status-icon" aria-hidden="true"></i>
+                            <span class="status-label">สถานะประตู</span>
+                            <span class="status-value" id="statusDoor">-</span>
+                        </li>
+                        <li class="status-item" data-status-key="productDoor">
+                            <i class="fa-solid fa-box-open status-icon" aria-hidden="true"></i>
+                            <span class="status-label">สถานะประตูสินค้า</span>
+                            <span class="status-value" id="statusProductDoor">-</span>
+                        </li>
+                        <li class="status-item" data-status-key="coin1">
+                            <i class="fa-solid fa-coins status-icon" aria-hidden="true"></i>
+                            <span class="status-label">สถานะเหรียญ 1 บาท</span>
+                            <span class="status-value" id="statusCoin1">-</span>
+                        </li>
+                        <li class="status-item" data-status-key="coin5">
+                            <i class="fa-solid fa-coins status-icon" aria-hidden="true"></i>
+                            <span class="status-label">สถานะเหรียญ 5 บาท</span>
+                            <span class="status-value" id="statusCoin5">-</span>
+                        </li>
+                        <li class="status-item" data-status-key="coin10">
+                            <i class="fa-solid fa-coins status-icon" aria-hidden="true"></i>
+                            <span class="status-label">สถานะเหรียญ 10 บาท</span>
+                            <span class="status-value" id="statusCoin10">-</span>
+                        </li>
+                    </ul>
+                </article>
+
+                <article class="card machine-import-card" id="machineImportCard">
+                    <h3 class="card-title"><i class="fa-solid fa-paste" aria-hidden="true"></i> นำเข้าข้อมูลตู้ (ข้อความจาก CMS)</h3>
+                    <label class="visually-hidden" for="machineTextInput">วางข้อความข้อมูลตู้</label>
+                    <textarea id="machineTextInput" class="machine-textarea" rows="8" placeholder="วางข้อความสถานะเครื่องและสถานะสินค้าที่คัดลอกจากระบบ CMS ที่นี่" spellcheck="false"></textarea>
+                    <div class="import-actions">
+                        <button type="button" class="btn btn-primary" id="btnParseMachineText">
+                            <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> อ่านข้อมูลจากข้อความ
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="btnImportMachineTxt">
+                            <i class="fa-solid fa-file-lines" aria-hidden="true"></i> นำเข้าไฟล์ .txt
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="btnClearMachineText">
+                            <i class="fa-solid fa-eraser" aria-hidden="true"></i> ล้างข้อความ
+                        </button>
+                    </div>
+                    <input type="file" id="fileInputMachineTxt" accept=".txt,text/plain" hidden>
+                </article>
+            </div>
+        </section>
+
+        <!-- ===================== SECTION 2: COIN REFILL SUMMARY ===================== -->
+        <section class="section" id="sectionCoinRefill" aria-labelledby="titleCoinRefill">
+            <div class="section-head">
+                <h2 class="section-title" id="titleCoinRefill">
+                    <i class="fa-solid fa-coins" aria-hidden="true"></i> สรุปเหรียญที่ต้องเติม
+                </h2>
+            </div>
+
+            <div class="coin-grid">
+                <article class="card coin-card" id="coinCard1" data-coin="1" data-max="100">
+                    <div class="coin-card-head">
+                        <span class="coin-badge coin-badge-1">1</span>
+                        <h3 class="coin-title">เหรียญ 1 บาท</h3>
+                    </div>
+                    <dl class="coin-figures">
+                        <div class="coin-figure">
+                            <dt>คงเหลือ</dt>
+                            <dd><span id="coin1Current">-</span> เหรียญ</dd>
+                        </div>
+                        <div class="coin-figure">
+                            <dt>ความจุสูงสุด</dt>
+                            <dd><span id="coin1Max">100</span> เหรียญ</dd>
+                        </div>
+                        <div class="coin-figure coin-figure-refill">
+                            <dt>ต้องเติม</dt>
+                            <dd><span id="coin1Refill">-</span> เหรียญ</dd>
+                        </div>
+                    </dl>
+                    <div class="progress" id="coin1Progress" role="progressbar" aria-label="ปริมาณเหรียญ 1 บาท" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <div class="progress-bar" id="coin1ProgressBar" style="width: 0%;"></div>
+                    </div>
+                    <p class="progress-text"><span id="coin1Percent">0</span>% ของความจุ</p>
+                </article>
+
+                <article class="card coin-card" id="coinCard5" data-coin="5" data-max="100">
+                    <div class="coin-card-head">
+                        <span class="coin-badge coin-badge-5">5</span>
+                        <h3 class="coin-title">เหรียญ 5 บาท</h3>
+                    </div>
+                    <dl class="coin-figures">
+                        <div class="coin-figure">
+                            <dt>คงเหลือ</dt>
+                            <dd><span id="coin5Current">-</span> เหรียญ</dd>
+                        </div>
+                        <div class="coin-figure">
+                            <dt>ความจุสูงสุด</dt>
+                            <dd><span id="coin5Max">100</span> เหรียญ</dd>
+                        </div>
+                        <div class="coin-figure coin-figure-refill">
+                            <dt>ต้องเติม</dt>
+                            <dd><span id="coin5Refill">-</span> เหรียญ</dd>
+                        </div>
+                    </dl>
+                    <div class="progress" id="coin5Progress" role="progressbar" aria-label="ปริมาณเหรียญ 5 บาท" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <div class="progress-bar" id="coin5ProgressBar" style="width: 0%;"></div>
+                    </div>
+                    <p class="progress-text"><span id="coin5Percent">0</span>% ของความจุ</p>
+                </article>
+
+                <article class="card coin-card" id="coinCard10" data-coin="10" data-max="60">
+                    <div class="coin-card-head">
+                        <span class="coin-badge coin-badge-10">10</span>
+                        <h3 class="coin-title">เหรียญ 10 บาท</h3>
+                    </div>
+                    <dl class="coin-figures">
+                        <div class="coin-figure">
+                            <dt>คงเหลือ</dt>
+                            <dd><span id="coin10Current">-</span> เหรียญ</dd>
+                        </div>
+                        <div class="coin-figure">
+                            <dt>ความจุสูงสุด</dt>
+                            <dd><span id="coin10Max">60</span> เหรียญ</dd>
+                        </div>
+                        <div class="coin-figure coin-figure-refill">
+                            <dt>ต้องเติม</dt>
+                            <dd><span id="coin10Refill">-</span> เหรียญ</dd>
+                        </div>
+                    </dl>
+                    <div class="progress" id="coin10Progress" role="progressbar" aria-label="ปริมาณเหรียญ 10 บาท" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <div class="progress-bar" id="coin10ProgressBar" style="width: 0%;"></div>
+                    </div>
+                    <p class="progress-text"><span id="coin10Percent">0</span>% ของความจุ</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- ===================== SECTION 3: PRODUCT REFILL SUMMARY ===================== -->
+        <section class="section" id="sectionProductRefill" aria-labelledby="titleProductRefill">
+            <div class="section-head">
+                <h2 class="section-title" id="titleProductRefill">
+                    <i class="fa-solid fa-cart-flatbed" aria-hidden="true"></i> สรุปสินค้าที่ต้องเติม
+                </h2>
+            </div>
+
+            <div class="stats-grid" id="refillStats">
+                <div class="stat-card">
+                    <i class="fa-solid fa-table-cells stat-icon" aria-hidden="true"></i>
+                    <span class="stat-label">จำนวนช่องทั้งหมด</span>
+                    <span class="stat-value" id="statTotalSlots">0</span>
+                </div>
+                <div class="stat-card stat-need">
+                    <i class="fa-solid fa-triangle-exclamation stat-icon" aria-hidden="true"></i>
+                    <span class="stat-label">ช่องที่ต้องเติม</span>
+                    <span class="stat-value" id="statNeedRefillSlots">0</span>
+                </div>
+                <div class="stat-card stat-ok">
+                    <i class="fa-solid fa-circle-check stat-icon" aria-hidden="true"></i>
+                    <span class="stat-label">ช่องที่ไม่ต้องเติม</span>
+                    <span class="stat-value" id="statNoRefillSlots">0</span>
+                </div>
+                <div class="stat-card stat-total">
+                    <i class="fa-solid fa-cubes stat-icon" aria-hidden="true"></i>
+                    <span class="stat-label">จำนวนชิ้นที่ต้องเติมรวม</span>
+                    <span class="stat-value" id="statTotalPieces">0</span>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="data-table" id="productRefillTable">
                     <thead>
                         <tr>
-                            <th class="col-id">Master Product ID</th>
-                            <th class="col-name-th">ชื่อสินค้า (TH)</th>
-                            <th class="col-name-en">ชื่อสินค้า (EN)</th>
-                            <th class="col-spiral-type">ประเภท Spiral</th>
-                            <th class="col-spiral-size">ขนาด Spiral</th>
-                            <th class="col-belt-color">สีสายพาน</th>
-                            <th class="col-barcode">Barcode</th>
-                            <th class="col-category">หมวดหมู่ (PMA)</th>
-                            <th class="col-gp">%GP</th>
-                            <th class="col-status">สถานะ</th>
-                            <th class="col-start-date">วันที่เริ่มจำหน่าย</th>
+                            <th scope="col">Slot</th>
+                            <th scope="col">ชื่อสินค้า</th>
+                            <th scope="col" class="text-center">คงเหลือ</th>
+                            <th scope="col" class="text-center">Max</th>
+                            <th scope="col" class="text-center">จำนวนที่ต้องเติม</th>
+                            <th scope="col" class="text-center">สถานะ</th>
                         </tr>
                     </thead>
-                    <tbody id="master-product-table-body">
+                    <tbody id="productRefillBody">
                         <tr class="empty-row">
-                            <td colspan="11" class="text-center">
-                                <i class="fa-solid fa-inbox"></i>
-                                <p>ยังไม่มีข้อมูล กรุณานำเข้าไฟล์ (Import) ก่อน</p>
-                            </td>
+                            <td colspan="6">ยังไม่มีข้อมูลสินค้าในตู้ กรุณานำเข้าข้อมูล</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+        </section>
 
-            <div class="table-footer">
-                <span id="master-product-count">แสดง 0 รายการ</span>
+        <!-- ===================== SECTION 4: MACHINE LAYOUT ===================== -->
+        <section class="section" id="sectionMachineLayout" aria-labelledby="titleMachineLayout">
+            <div class="section-head">
+                <h2 class="section-title" id="titleMachineLayout">
+                    <i class="fa-solid fa-table-columns" aria-hidden="true"></i> แผนผังตู้
+                </h2>
+            </div>
+
+            <ul class="legend" id="layoutLegend" aria-label="คำอธิบายสี">
+                <li class="legend-item">
+                    <span class="legend-swatch legend-full" aria-hidden="true"></span>
+                    <span class="legend-text">เต็ม (4/4)</span>
+                </li>
+                <li class="legend-item">
+                    <span class="legend-swatch legend-medium" aria-hidden="true"></span>
+                    <span class="legend-text">เหลือ 2-3 ชิ้น (2-3/4)</span>
+                </li>
+                <li class="legend-item">
+                    <span class="legend-swatch legend-low" aria-hidden="true"></span>
+                    <span class="legend-text">เหลือ 1 ชิ้น (1/4)</span>
+                </li>
+                <li class="legend-item">
+                    <span class="legend-swatch legend-empty" aria-hidden="true"></span>
+                    <span class="legend-text">หมด หรือติดลบ (0 / ติดลบ)</span>
+                </li>
+            </ul>
+
+            <div class="machine-layout" id="machineLayout">
+                <p class="empty-state">ยังไม่มีข้อมูลแผนผังตู้ กรุณานำเข้าข้อมูล</p>
+            </div>
+        </section>
+
+        <!-- ===================== SECTION 5: MASTER PRODUCT LIST ===================== -->
+        <section class="section" id="sectionMasterProducts" aria-labelledby="titleMasterProducts">
+            <div class="section-head">
+                <h2 class="section-title" id="titleMasterProducts">
+                    <i class="fa-solid fa-list" aria-hidden="true"></i> รายการสินค้าหลัก (Master Product List)
+                </h2>
+                <span class="result-count" id="masterCount">0 รายการ</span>
+            </div>
+
+            <div class="filter-bar" id="masterFilters">
+                <div class="filter-field filter-search">
+                    <label for="searchInput">ค้นหา</label>
+                    <div class="input-icon">
+                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                        <input type="search" id="searchInput" placeholder="ชื่อสินค้า หรือ Barcode" autocomplete="off">
+                    </div>
+                </div>
+                <div class="filter-field">
+                    <label for="categoryFilter">หมวดหมู่</label>
+                    <select id="categoryFilter">
+                        <option value="">ทั้งหมด</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label for="statusFilter">สถานะ</label>
+                    <select id="statusFilter">
+                        <option value="">ทั้งหมด</option>
+                        <option value="publish">publish</option>
+                        <option value="disable">disable</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="data-table" id="masterTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Master Product ID</th>
+                            <th scope="col">ชื่อสินค้า</th>
+                            <th scope="col">ชื่อสินค้า EN</th>
+                            <th scope="col">ประเภท Spiral</th>
+                            <th scope="col">ขนาด Spiral</th>
+                            <th scope="col">สีสายพาน</th>
+                            <th scope="col">Barcode</th>
+                            <th scope="col">หมวดหมู่</th>
+                            <th scope="col" class="text-center">อนุญาตขาย</th>
+                            <th scope="col" class="text-center">สถานะ</th>
+                            <th scope="col" class="text-right">%GP</th>
+                            <th scope="col">วันที่เริ่มจำหน่าย</th>
+                        </tr>
+                    </thead>
+                    <tbody id="masterBody">
+                        <tr class="empty-row">
+                            <td colspan="12">ยังไม่มีข้อมูลสินค้า กรุณานำเข้าไฟล์ product.xlsx</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </section>
 
     </main>
 
-    <div id="confirm-modal" class="modal-overlay hidden">
-        <div class="modal-content">
+    <!-- ===================== CONFIRM MODAL ===================== -->
+    <div class="modal-overlay" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalMessage" hidden>
+        <div class="modal">
             <div class="modal-header">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-                <h3>ยืนยันการทำรายการ</h3>
+                <i class="fa-solid fa-circle-question modal-icon" aria-hidden="true"></i>
+                <h3 class="modal-title" id="modalTitle">ยืนยันการทำรายการ</h3>
             </div>
-            <div class="modal-body">
-                <p id="confirm-modal-message">คุณต้องการดำเนินการต่อหรือไม่?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="confirm-modal-cancel">
-                    <i class="fa-solid fa-xmark"></i> ยกเลิก
-                </button>
-                <button type="button" class="btn btn-danger" id="confirm-modal-ok">
-                    <i class="fa-solid fa-check"></i> ยืนยัน
-                </button>
+            <p class="modal-message" id="modalMessage">คุณต้องการดำเนินการต่อหรือไม่?</p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="modalCancel">ยกเลิก</button>
+                <button type="button" class="btn btn-primary" id="modalConfirm">ยืนยัน</button>
             </div>
         </div>
     </div>
 
-    <footer class="main-footer">
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="app-footer" id="appFooter">
         <div class="footer-inner">
-            <p>&copy; 2026 Vending Machine Management System. All rights reserved.</p>
-            <p class="footer-version">Version 1.0.0</p>
+            <span class="footer-title">
+                <i class="fa-solid fa-store" aria-hidden="true"></i>
+                ระบบจัดการตู้จำหน่ายสินค้าอัตโนมัติ
+            </span>
+            <span class="footer-meta">อัปเดตข้อมูลล่าสุด: <span id="lastUpdated">-</span></span>
         </div>
     </footer>
 
-    <script src="script.js" defer></script>
-
+    <!-- ===================== SCRIPTS ===================== -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
